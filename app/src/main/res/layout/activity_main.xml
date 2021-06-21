@@ -10,7 +10,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:id="@+id/headerProgress"
-        android:background="@color/topBackground">
+        android:background="@color/darkBlue">
 
 <!--        <ProgressBar-->
 <!--            android:id="@+id/currentProgressbar"-->
@@ -125,7 +125,8 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:id="@+id/scrollView"
-        android:layout_below="@id/reminderTimes">
+        android:layout_below="@id/reminderTimes"
+        android:scrollbars="vertical">
 
         <RelativeLayout
             android:id="@+id/alarmListView"
@@ -134,86 +135,33 @@
             android:layout_marginTop="12dp"
             android:gravity="center_horizontal">
 
-            <LinearLayout
-                android:layout_width="300dp"
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/recyclerView"
+                android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:id="@+id/groupAlarm1"
-                android:clickable="true"
-                android:gravity="center_horizontal"
-                android:layout_alignParentTop="true"
-                android:background="@drawable/alarmlist_button">
-
-                <TextView
-                    android:id="@+id/alarm1"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="09:00 - 22:00"
-                    android:layout_marginTop="8dp"/>
+                android:scrollbars="vertical"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintRight_toRightOf="parent"
+                app:layout_constraintTop_toTopOf="parent">
 
 
-                <ImageView
-                    android:id="@+id/activeButton1"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="150dp"
-                    android:layout_marginTop="6dp"
-                    android:layout_marginBottom="6dp"
-                    android:src="@drawable/ic_checklist" />
+                <View
+                    android:id="@+id/dividerAlarm"
+                    android:layout_width="300dp"
+                    android:layout_height="8dp"
+                    android:layout_marginTop="12dp"
+                    android:background="@drawable/divider" />
 
-            </LinearLayout>
-
-            <View
-                android:id="@+id/dividerAlarm1"
-                android:layout_width="300dp"
-                android:layout_height="8dp"
-                android:layout_below="@id/groupAlarm1"
-                android:layout_marginTop="12dp"
-                android:background="@drawable/divider" />
-
-            <LinearLayout
-                android:layout_width="300dp"
-                android:layout_height="match_parent"
-                android:id="@+id/groupAlarm2"
-                android:clickable="true"
-                android:layout_below="@id/dividerAlarm1"
-                android:gravity="center_horizontal"
-                android:layout_marginTop="12dp"
-                android:background="@drawable/alarmlist_button">
-
-                <TextView
-                    android:id="@+id/alarm2"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="09:00 - 22:00"
-                    android:layout_marginTop="8dp"/>
-
-
-                <ImageView
-                    android:id="@+id/activeButton2"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="150dp"
-                    android:layout_marginTop="6dp"
-                    android:layout_marginBottom="6dp"
-                    android:src="@drawable/ic_checklist" />
-
-            </LinearLayout>
-
-            <View
-                android:id="@+id/dividerAlarm2"
-                android:layout_width="300dp"
-                android:layout_height="8dp"
-                android:layout_below="@id/groupAlarm2"
-                android:layout_marginTop="12dp"
-                android:background="@drawable/divider" />
+            </androidx.recyclerview.widget.RecyclerView>
 
             <Button
                 android:layout_width="300dp"
                 android:layout_height="wrap_content"
                 android:id="@+id/newReminder"
-                android:layout_below="@id/dividerAlarm2"
-                android:layout_marginTop="24dp"
-                android:layout_marginBottom="24dp"
+                android:layout_below="@id/recyclerView"
+                android:layout_marginTop="30dp"
+                android:layout_marginBottom="30dp"
                 android:background="@drawable/newreminder_button"
                 android:text="Add New Reminder"/>
 

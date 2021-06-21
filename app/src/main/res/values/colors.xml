@@ -8,10 +8,10 @@
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
 
-    <color name="topBackground">#120078</color>
-    <color name="onProgress">#FECD1A</color>
+    <color name="darkBlue">#120078</color>
+    <color name="orange">#FECD1A</color>
     
-    <color name="reminderButton">#FD3A69</color>
-    <color name="divider">#707070</color>
-    <color name="newReminderButton">#FFFFC800</color>
+    <color name="pink">#FD3A69</color>
+    <color name="midGray">#707070</color>
+    <color name="brightYellow">#FFFFC800</color>
 </resources>
