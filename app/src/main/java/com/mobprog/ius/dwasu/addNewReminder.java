@@ -4,6 +4,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.app.TimePickerDialog;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -16,20 +17,18 @@ public class addNewReminder extends AppCompatActivity implements AdapterView.OnI
 
     Button startTime;
     Button endTime;
+    Button meditConfirm_button;
+    int startHour;
+    int startMinute;
+    int endHour;
+    int endMinute;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add_new_reminder);
 
-        Spinner spinner = (Spinner) findViewById(R.id.timeIntervalPick);
-        // Create an ArrayAdapter using the string array and a default spinner layout
-        ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(this,
-        R.array.listtimer, android.R.layout.simple_spinner_dropdown_item);
-        // Specify the layout to use when the list of choices appears
-        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        // Apply the adapter to the spinner
-        spinner.setAdapter(adapter);
 
         //  initiate the edit text
         startTime = findViewById(R.id.startTimePick);
@@ -39,8 +38,8 @@ public class addNewReminder extends AppCompatActivity implements AdapterView.OnI
             @Override
             public void onClick(View v) {
                 Calendar mcurrentTime = Calendar.getInstance();
-                int startHour = mcurrentTime.get(Calendar.HOUR_OF_DAY);
-                int startMinute = mcurrentTime.get(Calendar.MINUTE);
+                startHour = mcurrentTime.get(Calendar.HOUR_OF_DAY);
+                startMinute = mcurrentTime.get(Calendar.MINUTE);
                 TimePickerDialog mStartTimePicker;
                 mStartTimePicker = new TimePickerDialog(addNewReminder.this, new TimePickerDialog.OnTimeSetListener() {
                     @Override
@@ -69,8 +68,8 @@ public class addNewReminder extends AppCompatActivity implements AdapterView.OnI
             @Override
             public void onClick(View v) {
                 Calendar mcurrentTime = Calendar.getInstance();
-                int endHour = mcurrentTime.get(Calendar.HOUR_OF_DAY);
-                int endMinute = mcurrentTime.get(Calendar.MINUTE);
+                endHour = mcurrentTime.get(Calendar.HOUR_OF_DAY);
+                endMinute = mcurrentTime.get(Calendar.MINUTE);
                 TimePickerDialog mEndTimePicker;
                 mEndTimePicker = new TimePickerDialog(addNewReminder.this, new TimePickerDialog.OnTimeSetListener() {
                     @Override
@@ -93,7 +92,26 @@ public class addNewReminder extends AppCompatActivity implements AdapterView.OnI
                 mEndTimePicker.show();
             }
         });
+
+        Spinner spinner = (Spinner) findViewById(R.id.timeIntervalPick);
+        // Create an ArrayAdapter using the string array and a default spinner layout
+        ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(this,
+                R.array.listtimer, R.layout.spinner_support);
+        // Specify the layout to use when the list of choices appears
+        adapter.setDropDownViewResource(R.layout.spinner_item);
+        // Apply the adapter to the spinner
+        spinner.setAdapter(adapter);
+
+
+        meditConfirm_button = findViewById(R.id.editConfirm_button);
+        meditConfirm_button.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+            }
+        });
     }
+
 
     @Override
     public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
@@ -104,4 +122,5 @@ public class addNewReminder extends AppCompatActivity implements AdapterView.OnI
     public void onNothingSelected(AdapterView<?> parent) {
 
     }
+
 }

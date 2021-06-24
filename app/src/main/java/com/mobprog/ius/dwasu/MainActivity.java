@@ -2,6 +2,8 @@ package com.mobprog.ius.dwasu;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.res.ResourcesCompat;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import android.app.ProgressDialog;
 import android.content.Intent;
@@ -10,9 +12,18 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.ProgressBar;
 
+import java.util.LinkedList;
+
 public class MainActivity extends AppCompatActivity {
+
+    private LinkedList<String> mAlarmList = new LinkedList<>();
+    private RecyclerView mRecyclerView;
+    private alarmListAdapter mAdapter;
+
+    int limit = 20;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -24,6 +35,19 @@ public class MainActivity extends AppCompatActivity {
             finish();
         }
 
+        for (int a = 1; a<limit; a++){
+            mAlarmList.addLast("Alarm "+1);
+        }
+
+        // Create recycler view.
+        mRecyclerView = findViewById(R.id.recyclerView);
+        // Create an adapter and supply the data to be displayed.
+//        mAdapter = new alarmListAdapter(this, mAlarmList);
+        // Connect the adapter with the recycler view.
+        mRecyclerView.setAdapter(mAdapter);
+        // Give the recycler view a default layout manager.
+        mRecyclerView.setLayoutManager(new LinearLayoutManager(this));
+
         Button mnewReminderButton = findViewById(R.id.newReminder);
         mnewReminderButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -33,7 +57,7 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        Button mlogOutButton = findViewById(R.id.logOutButton);
+        ImageButton mlogOutButton = findViewById(R.id.logOutButton);
         findViewById(R.id.logOutButton).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -48,4 +72,6 @@ public class MainActivity extends AppCompatActivity {
 //        // set the drawable as progress drawable
 //        ProgressBar.setProgressDrawable(draw);
     }
+
+
 }

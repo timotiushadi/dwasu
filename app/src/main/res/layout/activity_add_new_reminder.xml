@@ -66,7 +66,7 @@
                 android:layout_gravity="center_horizontal"
                 android:background="@drawable/timepickerbutton"
                 android:text="@string/endTimeClock"
-                android:drawableRight="@drawable/ic_arrow_down_sign_to_navigate"/>
+                android:drawableRight="@drawable/ic_arrow_down_sign_to_navigate" />
 
         </LinearLayout>
 
@@ -87,7 +87,8 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center_horizontal"
             android:ems="8"
-            android:hint="Remind Every"
+            android:textColor="@color/white"
+            android:text="Remind Every"
             android:textAlignment="center"
             android:textColorHint="@color/white"/>
 
@@ -95,10 +96,12 @@
             android:id="@+id/timeIntervalPick"
             android:layout_width="200dp"
             android:layout_height="50dp"
-            android:gravity="center"
+            android:gravity="center_horizontal"
             android:background="@drawable/timepickerbutton"
             android:ems="20"
-            android:spinnerMode="dialog"/>
+            android:spinnerMode="dialog"
+            tools:listitem="@layout/spinner_item"
+            />
 
     </LinearLayout>
 
