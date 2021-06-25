@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/itemRelativeLayout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -9,51 +10,59 @@
     android:paddingTop="20dp"
     android:paddingBottom="20dp">
 
-    <LinearLayout
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/alarmItemGroup"
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
         <LinearLayout
+            android:id="@+id/timeActiveGroup"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:orientation="vertical"
             android:background="@drawable/inner_item_container"
-            android:padding="20dp">
+            android:orientation="vertical"
+            android:padding="20dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
 
             <TextView
                 android:id="@+id/timeWork"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_horizontal"
-                android:layout_marginBottom="8dp"/>
+                android:layout_marginBottom="8dp" />
 
             <TextView
                 android:id="@+id/remindTimeEvery"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"/>
+                android:layout_height="wrap_content" />
 
         </LinearLayout>
 
         <LinearLayout
+            android:id="@+id/timeNextGroup"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginStart="20dp"
+            android:gravity="center_horizontal"
             android:orientation="vertical"
             android:padding="20dp"
-            android:layout_marginStart="20dp"
-            android:gravity="center_horizontal">
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/timeActiveGroup"
+            app:layout_constraintTop_toTopOf="parent">
 
             <TextView
                 android:id="@+id/lastMinutesToCall"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_horizontal"
-                android:layout_marginBottom="8dp"/>
+                android:layout_marginBottom="8dp" />
 
             <TextView
                 android:id="@+id/nextTimeReminding"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"/>
+                android:layout_height="wrap_content" />
 
         </LinearLayout>
 
@@ -62,10 +71,13 @@
             android:layout_width="24dp"
             android:layout_height="24dp"
             android:layout_gravity="center"
+            android:layout_marginEnd="25dp"
             android:button="@drawable/custom_checkbox"
-            android:layout_marginStart="25dp"/>
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
 
-    </LinearLayout>
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
     <View
         android:id="@+id/dividerAlarm"

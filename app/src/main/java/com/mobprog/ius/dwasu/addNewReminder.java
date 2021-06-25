@@ -2,7 +2,10 @@ package com.mobprog.ius.dwasu;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.app.ProgressDialog;
 import android.app.TimePickerDialog;
+import android.content.Intent;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -11,6 +14,17 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.Spinner;
 import android.widget.TimePicker;
+import android.widget.Toast;
+
+import com.google.android.material.snackbar.Snackbar;
+
+import org.apache.http.entity.mime.content.StringBody;
+
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
+import java.io.OutputStream;
+import java.net.HttpURLConnection;
+import java.net.URL;
 import java.util.Calendar;
 
 public class addNewReminder extends AppCompatActivity implements AdapterView.OnItemSelectedListener {
@@ -22,13 +36,15 @@ public class addNewReminder extends AppCompatActivity implements AdapterView.OnI
     int startMinute;
     int endHour;
     int endMinute;
+    String value;
+    long totalSize = 0;
+    ProgressDialog progDailog;
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add_new_reminder);
-
 
         //  initiate the edit text
         startTime = findViewById(R.id.startTimePick);
@@ -44,15 +60,13 @@ public class addNewReminder extends AppCompatActivity implements AdapterView.OnI
                 mStartTimePicker = new TimePickerDialog(addNewReminder.this, new TimePickerDialog.OnTimeSetListener() {
                     @Override
                     public void onTimeSet(TimePicker timePicker, int selectedStartHour, int selectedStartMinute) {
-                        if(selectedStartMinute == 0 ) {
+                        if (selectedStartMinute == 0) {
                             startTime.setText(selectedStartHour + ":00");
-                        }
-                        else if(selectedStartMinute < 10){
-                            if (selectedStartHour < 10){
+                        } else if (selectedStartMinute < 10) {
+                            if (selectedStartHour < 10) {
                                 startTime.setText("0" + selectedStartHour + ":0" + selectedStartMinute);
                             }
-                        }
-                        else {
+                        } else {
                             startTime.setText(selectedStartHour + ":" + selectedStartMinute);
                         }
                     }
@@ -74,17 +88,13 @@ public class addNewReminder extends AppCompatActivity implements AdapterView.OnI
                 mEndTimePicker = new TimePickerDialog(addNewReminder.this, new TimePickerDialog.OnTimeSetListener() {
                     @Override
                     public void onTimeSet(TimePicker timePicker, int selectedEndHour, int selectedEndMinute) {
-                        if(selectedEndMinute == 0 ) {
-                            if (selectedEndHour < 10){
-                                endTime.setText("0" + selectedEndHour + ":00");
-                            }
-                        }
-                        else if(selectedEndMinute < 10){
-                            if (selectedEndHour < 10){
+                        if (selectedEndMinute == 0) {
+                            endTime.setText(selectedEndHour + ":00");
+                        } else if (selectedEndMinute < 10) {
+                            if (selectedEndHour < 10) {
                                 endTime.setText("0" + selectedEndHour + ":0" + selectedEndMinute);
                             }
-                        }
-                        else {
+                        } else {
                             endTime.setText(selectedEndHour + ":" + selectedEndMinute);
                         }
                     }
@@ -102,20 +112,21 @@ public class addNewReminder extends AppCompatActivity implements AdapterView.OnI
         // Apply the adapter to the spinner
         spinner.setAdapter(adapter);
 
-
         meditConfirm_button = findViewById(R.id.editConfirm_button);
         meditConfirm_button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
+                new UploadAlarmDataToServer().execute();
             }
         });
     }
 
-
     @Override
     public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-        parent.getItemAtPosition(position);
+        /*parent.getItemAtPosition(position);*/
+        String[] valueListTimer = getResources().getStringArray(R.array.valueListTimer);
+        value = String.valueOf(valueListTimer[(int) parent.getItemAtPosition(position)]);
+        Log.e("Value of Spinner", value);
     }
 
     @Override
@@ -123,4 +134,82 @@ public class addNewReminder extends AppCompatActivity implements AdapterView.OnI
 
     }
 
+    private class UploadAlarmDataToServer extends AsyncTask<Void, Integer, String> {
+        @Override
+        protected void onPreExecute() {
+            progDailog = new ProgressDialog(addNewReminder.this);
+            progDailog.setMessage("Mendaftar...");
+            progDailog.setIndeterminate(false);
+            progDailog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+            progDailog.setCancelable(false);
+            progDailog.setCanceledOnTouchOutside(false);
+            progDailog.show();
+            super.onPreExecute();
+        }
+
+        @Override
+        protected String doInBackground(Void... params) {
+            String data = null;
+            try {
+                data = sendDataTimer();
+            } catch (Exception e) {
+                e.printStackTrace();
+                data = "Gagal";
+            }
+            return data;
+        }
+
+        public String sendDataTimer() throws Exception {
+            URL url = new URL("https://ius.mobile.indoserver.web.id/alarmData.php");
+            HttpURLConnection con = (HttpURLConnection) url.openConnection();
+            AndroidMultiPartEntity entity = new AndroidMultiPartEntity(
+                    new AndroidMultiPartEntity.ProgressListener() {
+                        @Override
+                        public void transferred(long num) {
+                            publishProgress((int) ((num / (float) totalSize) * 100));
+                        }
+                    });
+            entity.addPart("startHour", new StringBody(startHour + ""));
+            entity.addPart("endHour", new StringBody(endHour + ""));
+            entity.addPart("intervalWaktu", new StringBody(value + ""));
+
+            totalSize = entity.getContentLength();
+            con.setRequestMethod("POST");
+            con.setRequestProperty("Connection", "Keep-Alive");
+            con.addRequestProperty("Content-length", totalSize + "");
+            con.addRequestProperty(entity.getContentType().getName(), entity.getContentType().getValue());
+
+            OutputStream os = con.getOutputStream();
+            entity.writeTo(con.getOutputStream());
+            os.close();
+            con.connect();
+
+            BufferedReader in = new BufferedReader(
+                    new InputStreamReader(con.getInputStream()));
+            String inputLine;
+            StringBuilder response = new StringBuilder();
+
+            while ((inputLine = in.readLine()) != null) {
+                response.append(inputLine);
+            }
+            in.close();
+
+            return response.toString();
+        }
+
+        @Override
+        protected void onPostExecute(String result) {
+            progDailog.dismiss();
+            if (result != null) {
+                Log.e("UPLOAD", result);
+                if (result.equalsIgnoreCase("OK")) {
+                    Toast.makeText(addNewReminder.this, "Data Alarm tersimpan", Toast.LENGTH_SHORT).show();
+                    startActivity(new Intent(addNewReminder.this, MainActivity.class));
+                } else {
+                    Snackbar.make(findViewById(android.R.id.content), result, Snackbar.LENGTH_LONG).show();
+                }
+            }
+            super.onPostExecute(result);
+        }
+    }
 }
