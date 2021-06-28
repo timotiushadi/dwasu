@@ -4,6 +4,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.app.ProgressDialog;
 import android.app.TimePickerDialog;
+import android.content.Context;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -21,6 +22,7 @@ import com.google.android.material.snackbar.Snackbar;
 import org.apache.http.entity.mime.content.StringBody;
 
 import java.io.BufferedReader;
+import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.net.HttpURLConnection;
@@ -116,6 +118,9 @@ public class addNewReminder extends AppCompatActivity implements AdapterView.OnI
         meditConfirm_button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                String.valueOf(startHour);
+                String.valueOf(endHour);
+                String.valueOf(R.array.valueListTimer);
                 new UploadAlarmDataToServer().execute();
             }
         });
@@ -125,7 +130,7 @@ public class addNewReminder extends AppCompatActivity implements AdapterView.OnI
     public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
         /*parent.getItemAtPosition(position);*/
         String[] valueListTimer = getResources().getStringArray(R.array.valueListTimer);
-        value = String.valueOf(valueListTimer[(int) parent.getItemAtPosition(position)]);
+        value = valueListTimer[(int) parent.getItemAtPosition(position)];
         Log.e("Value of Spinner", value);
     }
 
@@ -138,7 +143,7 @@ public class addNewReminder extends AppCompatActivity implements AdapterView.OnI
         @Override
         protected void onPreExecute() {
             progDailog = new ProgressDialog(addNewReminder.this);
-            progDailog.setMessage("Mendaftar...");
+            progDailog.setMessage("Menyimpan...");
             progDailog.setIndeterminate(false);
             progDailog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
             progDailog.setCancelable(false);
