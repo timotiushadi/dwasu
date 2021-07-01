@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".TimerDialog">
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <TextView
+                android:id="@+id/CountdownTimer"
+                android:layout_width="200dp"
+                android:layout_height="50dp"
+                android:layout_centerHorizontal="true"
+                android:layout_marginTop="100dp"
+                android:gravity="center"
+                android:text="00:00:00" />
+
+            <LinearLayout
+                android:id="@+id/btnReactAlarmGroup"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/CountdownTimer"
+                android:layout_centerHorizontal="true"
+                android:layout_marginTop="100dp"
+                android:layout_marginBottom="100dp">
+
+                <Button
+                    android:id="@+id/btnPostponeAlarm"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="80dp"
+                    android:text="Postpone" />
+
+                <Button
+                    android:id="@+id/btnStopAlarm"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Stop" />
+
+            </LinearLayout>
+
+            <FrameLayout
+                android:id="@+id/FragmentContainer_AddGlassDialog"
+                android:name="AddGlassFragment"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_below="@id/btnReactAlarmGroup"
+                tools:layout="@layout/fragment_add_glass_dialog" />
+        </RelativeLayout>
+    </ScrollView>
+</RelativeLayout>

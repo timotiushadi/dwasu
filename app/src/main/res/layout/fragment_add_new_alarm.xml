@@ -1,0 +1,130 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".AddNewAlarmFragment"
+    android:background="@color/darkBlue">
+
+    <!-- Update blank fragment layout -->
+
+        <ImageButton
+            android:id="@+id/btnCloseFragment"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentTop="true"
+            android:layout_alignParentEnd="true"
+            android:layout_marginTop="30dp"
+            android:layout_marginEnd="30dp"
+            android:background="@drawable/ic_cross_sign" />
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="200dp"
+            android:id="@+id/clockGroup">
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:id="@+id/startGroup">
+
+                <TextView
+                    android:id="@+id/startText"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:ems="5"
+                    android:hint="Start"
+                    android:layout_gravity="center"
+                    android:textAlignment="center"
+                    android:textColorHint="@color/white" />
+
+                <Button
+                    android:id="@+id/startTimePick"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_horizontal"
+                    android:text="@string/startTimeClock"
+                    android:background="@drawable/button_normal"
+                    android:drawableRight="@drawable/ic_arrow_down_sign_to_navigate"/>
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/endGroup"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="50dp"
+                android:layout_toEndOf="@+id/startGroup"
+                android:orientation="vertical">
+
+                <TextView
+                    android:id="@+id/endText"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:ems="5"
+                    android:hint="End"
+                    android:layout_gravity="center"
+                    android:textAlignment="center"
+                    android:textColorHint="@color/white"/>
+
+                <Button
+                    android:id="@+id/endTimePick"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_horizontal"
+                    android:background="@drawable/button_normal"
+                    android:text="@string/endTimeClock"
+                    android:drawableRight="@drawable/ic_arrow_down_sign_to_navigate" />
+
+            </LinearLayout>
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/timeIntervalGroup"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="50dp"
+            android:layout_below="@id/clockGroup"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/timeIntervalText"
+                android:layout_width="118dp"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:ems="8"
+                android:textColor="@color/white"
+                android:text="Remind Every"
+                android:textAlignment="center"
+                android:textColorHint="@color/white"/>
+
+            <Spinner
+                android:id="@+id/timeIntervalPick"
+                android:layout_width="200dp"
+                android:layout_height="50dp"
+                android:gravity="center_horizontal"
+                android:background="@drawable/button_normal"
+                android:ems="20"
+                android:spinnerMode="dialog"
+                tools:listitem="@layout/spinner_item"
+                />
+
+        </LinearLayout>
+
+        <Button
+            android:id="@+id/editConfirm_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/timeIntervalGroup"
+            android:layout_marginTop="50dp"
+            android:layout_centerHorizontal="true"
+            android:background="@drawable/button_normal"
+            android:ems="20"
+            android:text="confirm" />
+
+</RelativeLayout>
