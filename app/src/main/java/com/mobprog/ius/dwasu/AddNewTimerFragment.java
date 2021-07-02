@@ -3,6 +3,7 @@ package com.mobprog.ius.dwasu;
 import android.app.ProgressDialog;
 import android.app.TimePickerDialog;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.os.Bundle;
 
@@ -29,10 +30,11 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.Calendar;
 
+import static android.content.Context.MODE_PRIVATE;
 
-public class AddNewAlarmFragment extends Fragment {
 
-    MainActivity mainActivity = new MainActivity();
+public class AddNewTimerFragment extends Fragment {
+
     Button startTime;
     Button endTime;
     Button meditConfirm_button;
@@ -40,18 +42,23 @@ public class AddNewAlarmFragment extends Fragment {
     int startMinute;
     int endHour;
     int endMinute;
-    String value;
+    int position = 1;
     long totalSize = 0;
+    String value;
     ProgressDialog progDailog;
     View rootview;
 
-    public AddNewAlarmFragment() {
+    private SharedPreferences mPreferences;
+    private String sharedPrefFile =
+            "com.mobprog.ius.dwasu";
+
+    public AddNewTimerFragment() {
         // Required empty public constructor
     }
 
-    public static AddNewAlarmFragment newInstance() {
+    public static AddNewTimerFragment newInstance() {
 
-        return new AddNewAlarmFragment();
+        return new AddNewTimerFragment();
     }
 
     @Override
@@ -60,8 +67,11 @@ public class AddNewAlarmFragment extends Fragment {
 
         View rootView = inflater.inflate(R.layout.fragment_add_new_alarm,
                 container, false);
-
         rootview = rootView;
+
+        /*Shared Pref*/
+        mPreferences = this.getActivity().getSharedPreferences(sharedPrefFile, MODE_PRIVATE);
+        SharedPreferences.Editor mPreferencesEditor = mPreferences.edit();
 
         ImageButton mbtnCloseFragment = rootView.findViewById(R.id.btnCloseFragment);
         mbtnCloseFragment.setOnClickListener(new View.OnClickListener() {
@@ -79,7 +89,7 @@ public class AddNewAlarmFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 Calendar mcurrentTime = Calendar.getInstance();
-                startHour = mcurrentTime.get(Calendar.HOUR_OF_DAY);
+                startHour = mcurrentTime.get(Calendar.HOUR);
                 startMinute = mcurrentTime.get(Calendar.MINUTE);
                 TimePickerDialog mStartTimePicker;
                 mStartTimePicker = new TimePickerDialog(getContext(), new TimePickerDialog.OnTimeSetListener() {
@@ -94,6 +104,7 @@ public class AddNewAlarmFragment extends Fragment {
                         } else {
                             startTime.setText(selectedStartHour + ":" + selectedStartMinute);
                         }
+                        startHour = selectedStartHour;
                     }
                 }, startHour, startMinute, true);//Yes 24 hour time
                 mStartTimePicker.show();
@@ -107,7 +118,7 @@ public class AddNewAlarmFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 Calendar mcurrentTime = Calendar.getInstance();
-                endHour = mcurrentTime.get(Calendar.HOUR_OF_DAY);
+                endHour = mcurrentTime.get(Calendar.HOUR);
                 endMinute = mcurrentTime.get(Calendar.MINUTE);
                 TimePickerDialog mEndTimePicker;
                 mEndTimePicker = new TimePickerDialog(getContext(), new TimePickerDialog.OnTimeSetListener() {
@@ -122,6 +133,7 @@ public class AddNewAlarmFragment extends Fragment {
                         } else {
                             endTime.setText(selectedEndHour + ":" + selectedEndMinute);
                         }
+                        endHour = selectedEndHour;
                     }
                 }, endHour, endMinute, true);//Yes 24 hour time
                 mEndTimePicker.show();
@@ -137,32 +149,36 @@ public class AddNewAlarmFragment extends Fragment {
         // Apply the adapter to the spinner
         spinner.setAdapter(adapter);
 
+        spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parentView, View selectedItemView, int position, long id) {
+                // your code here
+                String[] valueListTimer = getResources().getStringArray(R.array.valueListTimer);
+                value = valueListTimer[position];
+                Log.e("Value of Spinner", value);
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parentView) {
+                // your code here
+            }
+        });
+
         meditConfirm_button = rootView.findViewById(R.id.editConfirm_button);
         meditConfirm_button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 String.valueOf(startHour);
                 String.valueOf(endHour);
-                String.valueOf(R.array.valueListTimer);
+                String.valueOf(value);
+                new MyListDataTimer(String.valueOf(startHour),String.valueOf(endHour),String.valueOf(value),String.valueOf(position));
                 new UploadAlarmDataToServer().execute();
+                position++;
             }
         });
 
         // Inflate the layout for this fragment
         return rootView;
-    }
-
-    /*@Override*/
-    public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-        /*parent.getItemAtPosition(position);*/
-        String[] valueListTimer = getResources().getStringArray(R.array.valueListTimer);
-        value = valueListTimer[(int) parent.getItemAtPosition(position)];
-        Log.e("Value of Spinner", value);
-    }
-
-    /*@Override*/
-    public void onNothingSelected(AdapterView<?> parent) {
-
     }
 
     private class UploadAlarmDataToServer extends AsyncTask<Void, Integer, String> {
@@ -236,11 +252,9 @@ public class AddNewAlarmFragment extends Fragment {
                 if (result.equalsIgnoreCase("OK")) {
                     Toast.makeText(getContext(), "Data Alarm tersimpan", Toast.LENGTH_SHORT).show();
                     startActivity(new Intent(getContext(), MainActivity.class));
-                } /*else
-                    Snackbar.make(rootview.findViewById(android.R.id.content), result, Snackbar.LENGTH_LONG).show();*/
+                }
             }
             super.onPostExecute(result);
         }
     }
-
 }

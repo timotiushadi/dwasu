@@ -7,29 +7,25 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageButton;
 
+import java.util.ArrayList;
 import java.util.LinkedList;
-import java.util.Random;
 
 public class MainActivity extends AppCompatActivity {
 
-    private LinkedList<String> mintervalTimeList = new LinkedList<>();
+    private ArrayList<MyListDataTimer> mintervalTimeList = new ArrayList();
     private RecyclerView mRecyclerView;
     private alarmListAdapter mAdapter;
 
     public boolean isFragmentAddNewAlarmDisplayed = false;
 
     static final String STATE_FRAGMENT = "state_of_fragment";
-
-    Random r = new Random();
-    int rn = r.nextInt(120 - 15) + 15;
-    int limit = 5;
-    long currentHour;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -44,15 +40,11 @@ public class MainActivity extends AppCompatActivity {
         // Create recycler view.
         mRecyclerView = findViewById(R.id.recyclerView);
         // Create an adapter and supply the data to be displayed.
-        mAdapter = new alarmListAdapter(this, mintervalTimeList);
+        mAdapter = new alarmListAdapter(getApplicationContext(), mintervalTimeList);
         // Connect the adapter with the recycler view.
         mRecyclerView.setAdapter(mAdapter);
         // Give the recycler view a default layout manager.
         mRecyclerView.setLayoutManager(new LinearLayoutManager(this));
-
-        for (int a = 1; a<=limit; a++){
-            mintervalTimeList.addLast("Interval "+ rn + " menit");
-        }
 
         if (savedInstanceState != null)
             isFragmentAddNewAlarmDisplayed = savedInstanceState.getBoolean(STATE_FRAGMENT);
@@ -76,7 +68,6 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-
 //        // Get the Drawable custom_progressbar
 //        Drawable draw = ResourcesCompat.getDrawable(getResources(), R.drawable.progress_bar, null);
 //        // set the drawable as progress drawable
@@ -93,7 +84,7 @@ public class MainActivity extends AppCompatActivity {
         // Get the FragmentManager.
         FragmentManager fragmentManager = getSupportFragmentManager();
         // Check to see if the fragment is already showing.
-        AddNewAlarmFragment simpleFragment = (AddNewAlarmFragment) fragmentManager
+        AddNewTimerFragment simpleFragment = (AddNewTimerFragment) fragmentManager
                 .findFragmentById(R.id.FragmentContainer_AddNewAlarm);
         if (simpleFragment != null) {
             // Create and commit the transaction to remove the fragment.
@@ -106,7 +97,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void displayFragment(){
-        AddNewAlarmFragment simpleFragment = AddNewAlarmFragment.newInstance();
+        AddNewTimerFragment simpleFragment = AddNewTimerFragment.newInstance();
         // Get the FragmentManager and start a transaction.
         FragmentManager fragmentManager = getSupportFragmentManager();
         FragmentTransaction fragmentTransaction = fragmentManager

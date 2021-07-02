@@ -8,19 +8,19 @@ import android.widget.TextView;
 
 import androidx.recyclerview.widget.RecyclerView;
 
+import java.util.ArrayList;
 import java.util.LinkedList;
 
 
 public class alarmListAdapter extends RecyclerView.Adapter<alarmListAdapter.alarmListHolder>{
 
-    private final LinkedList<String> mintervalTimeList;
+    private final ArrayList<MyListDataTimer> mintervalTimeList;
     private LayoutInflater mInflater;
 
-    public alarmListAdapter(Context context, LinkedList<String> mintervalTimeList) {
+    public alarmListAdapter(Context context, ArrayList<MyListDataTimer> mintervalTimeList) {
         mInflater = LayoutInflater.from(context);
         this.mintervalTimeList = mintervalTimeList;
     }
-
 
     @Override
     public alarmListHolder onCreateViewHolder(ViewGroup parent, int viewType) {
@@ -31,8 +31,9 @@ public class alarmListAdapter extends RecyclerView.Adapter<alarmListAdapter.alar
 
     @Override
     public void onBindViewHolder(alarmListAdapter.alarmListHolder holder, int position) {
-        String mCurrent = mintervalTimeList.get(position);
-        holder.mintervalTime.setText(mCurrent);
+        final MyListDataTimer myListData = mintervalTimeList.get(position);
+        holder.mintervalTime.setText(myListData.getIntervalWaktu());
+        holder.mtimeWork.setText(myListData.getStartHour() +":00 - " + myListData.getEndHour() +":00");
     }
 
     @Override
@@ -43,12 +44,14 @@ public class alarmListAdapter extends RecyclerView.Adapter<alarmListAdapter.alar
 
     public class alarmListHolder extends RecyclerView.ViewHolder {
 
-        public final TextView mintervalTime;
+        public TextView mintervalTime;
+        public TextView mtimeWork;
         final alarmListAdapter mAdapter;
 
         public alarmListHolder(View itemView, alarmListAdapter adapter) {
             super(itemView);
             mintervalTime = itemView.findViewById(R.id.intervalTime);
+            mtimeWork = itemView.findViewById(R.id.timeWork);
             this.mAdapter = adapter;
 
         }
