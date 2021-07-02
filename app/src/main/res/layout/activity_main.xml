@@ -33,13 +33,23 @@
 <!--            android:progressTint="@color/onProgress"-->
 <!--            android:progressBackgroundTint="@color/white"/>-->
 
+        <TextView
+            android:id="@+id/textUserName"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
+            android:layout_marginStart="40dp"
+            android:textSize="18sp"
+            android:textColor="@color/white"/>
+
         <ImageButton
             android:id="@+id/logOutButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentTop="true"
-            android:layout_marginStart="20dp"
+            android:layout_alignParentEnd="true"
             android:layout_marginTop="20dp"
+            android:layout_marginEnd="20dp"
             android:src="@drawable/ic_logout"
             android:background="@null"/>
 

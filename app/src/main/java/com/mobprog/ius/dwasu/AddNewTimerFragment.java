@@ -28,6 +28,7 @@ import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.Calendar;
 
 import static android.content.Context.MODE_PRIVATE;
@@ -64,6 +65,8 @@ public class AddNewTimerFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+
+        ArrayList<MyListDataTimer> myListDataTimers = new ArrayList<>();
 
         View rootView = inflater.inflate(R.layout.fragment_add_new_alarm,
                 container, false);
@@ -171,7 +174,8 @@ public class AddNewTimerFragment extends Fragment {
                 String.valueOf(startHour);
                 String.valueOf(endHour);
                 String.valueOf(value);
-                new MyListDataTimer(String.valueOf(startHour),String.valueOf(endHour),String.valueOf(value),String.valueOf(position));
+                MyListDataTimer isian = new MyListDataTimer(String.valueOf(startHour),String.valueOf(endHour),String.valueOf(value),String.valueOf(position));
+                myListDataTimers.add(isian);
                 new UploadAlarmDataToServer().execute();
                 position++;
             }

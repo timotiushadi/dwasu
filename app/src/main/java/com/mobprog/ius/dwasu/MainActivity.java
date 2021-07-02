@@ -13,15 +13,14 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageButton;
+import android.widget.TextView;
 
 import java.util.ArrayList;
 import java.util.LinkedList;
 
 public class MainActivity extends AppCompatActivity {
 
-    private ArrayList<MyListDataTimer> mintervalTimeList = new ArrayList();
-    private RecyclerView mRecyclerView;
-    private alarmListAdapter mAdapter;
+
 
     public boolean isFragmentAddNewAlarmDisplayed = false;
 
@@ -32,15 +31,19 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        ArrayList<MyListDataTimer> myListDataTimers = new ArrayList<>();
+
+        ((TextView) findViewById(R.id.textUserName)).setText("Hello " + getSharedPreferences("Dwasu", 0).getString("user", ""));
+
         if (getSharedPreferences("Dwasu", 0) == null || !getSharedPreferences("Dwasu", 0).contains("user")) {
             startActivity(new Intent(MainActivity.this, LoginActivity.class));
             finish();
         }
 
         // Create recycler view.
-        mRecyclerView = findViewById(R.id.recyclerView);
+        RecyclerView mRecyclerView = findViewById(R.id.recyclerView);
         // Create an adapter and supply the data to be displayed.
-        mAdapter = new alarmListAdapter(getApplicationContext(), mintervalTimeList);
+        alarmListAdapter mAdapter = new alarmListAdapter(getApplicationContext(), myListDataTimers);
         // Connect the adapter with the recycler view.
         mRecyclerView.setAdapter(mAdapter);
         // Give the recycler view a default layout manager.

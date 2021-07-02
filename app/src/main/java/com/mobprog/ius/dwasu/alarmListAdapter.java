@@ -14,7 +14,7 @@ import java.util.LinkedList;
 
 public class alarmListAdapter extends RecyclerView.Adapter<alarmListAdapter.alarmListHolder>{
 
-    private final ArrayList<MyListDataTimer> mintervalTimeList;
+    public final ArrayList<MyListDataTimer> mintervalTimeList;
     private LayoutInflater mInflater;
 
     public alarmListAdapter(Context context, ArrayList<MyListDataTimer> mintervalTimeList) {
@@ -24,8 +24,7 @@ public class alarmListAdapter extends RecyclerView.Adapter<alarmListAdapter.alar
 
     @Override
     public alarmListHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        View mItemView = mInflater.inflate(R.layout.alarm_item,
-                parent, false);
+        View mItemView = mInflater.inflate(R.layout.alarm_item, parent, false);
         return new alarmListHolder(mItemView, this);
     }
 
