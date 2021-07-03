@@ -1,37 +1,42 @@
 package com.mobprog.ius.dwasu;
 
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.fragment.app.FragmentManager;
-import androidx.fragment.app.FragmentTransaction;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
-
 import android.content.Intent;
-import android.content.SharedPreferences;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.TextView;
+import android.widget.Toast;
+
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentTransaction;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.util.ArrayList;
-import java.util.LinkedList;
 
 public class MainActivity extends AppCompatActivity {
 
-
+    ArrayList<MyListDataTimer> myListDataTimers = new ArrayList<>();
 
     public boolean isFragmentAddNewAlarmDisplayed = false;
 
     static final String STATE_FRAGMENT = "state_of_fragment";
 
+    alarmListAdapter mAdapter;
+    RecyclerView mRecyclerView;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
-        ArrayList<MyListDataTimer> myListDataTimers = new ArrayList<>();
 
         ((TextView) findViewById(R.id.textUserName)).setText("Hello " + getSharedPreferences("Dwasu", 0).getString("user", ""));
 
@@ -40,14 +45,14 @@ public class MainActivity extends AppCompatActivity {
             finish();
         }
 
-        // Create recycler view.
-        RecyclerView mRecyclerView = findViewById(R.id.recyclerView);
+        mRecyclerView = findViewById(R.id.recyclerView);
         // Create an adapter and supply the data to be displayed.
-        alarmListAdapter mAdapter = new alarmListAdapter(getApplicationContext(), myListDataTimers);
+        mAdapter = new alarmListAdapter(myListDataTimers);
         // Connect the adapter with the recycler view.
         mRecyclerView.setAdapter(mAdapter);
         // Give the recycler view a default layout manager.
         mRecyclerView.setLayoutManager(new LinearLayoutManager(this));
+        new GetTimer().execute();
 
         if (savedInstanceState != null)
             isFragmentAddNewAlarmDisplayed = savedInstanceState.getBoolean(STATE_FRAGMENT);
@@ -114,4 +119,61 @@ public class MainActivity extends AppCompatActivity {
         isFragmentAddNewAlarmDisplayed = true;
     }
 
+    private class GetTimer extends AsyncTask<Void, Void, Void>{
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+            Toast.makeText(getApplicationContext(), "Checking data timer", Toast.LENGTH_LONG).show();
+
+        }
+
+        @Override
+        protected Void doInBackground(Void... arg0) {
+            myListDataTimers = new ArrayList<>();
+            HttpHandler sh = new HttpHandler();
+            // Making a request to url and getting response
+            String url = "https://ius.mobile.indoserver.web.id/getData.php";
+            String jsonStr = sh.makeServiceCall(url);
+
+            Log.e("Donlot json", "Response from url: " + jsonStr);
+            if (jsonStr != null) {
+                try {
+                    JSONObject jsonObj = new JSONObject(jsonStr);
+                    JSONObject dataTimer = jsonObj.getJSONObject("Data Timer");
+                    JSONArray datasTimer = dataTimer.getJSONArray("dataTimer");
+
+                    // looping through All Contacts
+                    for (int i = 0; i < datasTimer.length(); i++) {
+                        JSONObject g = datasTimer.getJSONObject(i);
+
+                        String pos = g.getString("pos");
+                        String startHour = g.getString("startHour");
+                        String endHour = g.getString("endHour");
+                        String intervalWaktu = g.getString("intervalWaktu");
+
+                        MyListDataTimer isianTimer = new MyListDataTimer(pos, startHour, endHour, intervalWaktu);
+
+                        myListDataTimers.add(isianTimer);
+
+                        Log.e("Donlot json", "Json total : " + myListDataTimers.size());
+                    }
+                } catch (final JSONException e) {
+                    Log.e("Donlot json", "Json parsing error: " + e.getMessage());
+
+                }
+
+            }
+
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(Void result) {
+            super.onPostExecute(result);
+            mAdapter = new alarmListAdapter(myListDataTimers);
+            mRecyclerView.setLayoutManager(new LinearLayoutManager(getApplicationContext()));
+            //recyclerView.setLayoutManager(new GridLayoutManager(getActivity(), 2));
+            mRecyclerView.setAdapter(mAdapter);
+        }
+    }
 }

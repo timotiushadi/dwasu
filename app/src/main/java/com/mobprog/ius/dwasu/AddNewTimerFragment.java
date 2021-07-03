@@ -3,12 +3,8 @@ package com.mobprog.ius.dwasu;
 import android.app.ProgressDialog;
 import android.app.TimePickerDialog;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.os.Bundle;
-
-import androidx.fragment.app.Fragment;
-
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -21,6 +17,8 @@ import android.widget.Spinner;
 import android.widget.TimePicker;
 import android.widget.Toast;
 
+import androidx.fragment.app.Fragment;
+
 import org.apache.http.entity.mime.content.StringBody;
 
 import java.io.BufferedReader;
@@ -28,11 +26,7 @@ import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
-import java.util.ArrayList;
 import java.util.Calendar;
-
-import static android.content.Context.MODE_PRIVATE;
-
 
 public class AddNewTimerFragment extends Fragment {
 
@@ -43,15 +37,10 @@ public class AddNewTimerFragment extends Fragment {
     int startMinute;
     int endHour;
     int endMinute;
-    int position = 1;
     long totalSize = 0;
     String value;
     ProgressDialog progDailog;
     View rootview;
-
-    private SharedPreferences mPreferences;
-    private String sharedPrefFile =
-            "com.mobprog.ius.dwasu";
 
     public AddNewTimerFragment() {
         // Required empty public constructor
@@ -66,15 +55,9 @@ public class AddNewTimerFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
 
-        ArrayList<MyListDataTimer> myListDataTimers = new ArrayList<>();
-
         View rootView = inflater.inflate(R.layout.fragment_add_new_alarm,
                 container, false);
         rootview = rootView;
-
-        /*Shared Pref*/
-        mPreferences = this.getActivity().getSharedPreferences(sharedPrefFile, MODE_PRIVATE);
-        SharedPreferences.Editor mPreferencesEditor = mPreferences.edit();
 
         ImageButton mbtnCloseFragment = rootView.findViewById(R.id.btnCloseFragment);
         mbtnCloseFragment.setOnClickListener(new View.OnClickListener() {
@@ -143,7 +126,7 @@ public class AddNewTimerFragment extends Fragment {
             }
         });
 
-        Spinner spinner = (Spinner) rootView.findViewById(R.id.timeIntervalPick);
+        Spinner spinner = rootView.findViewById(R.id.timeIntervalPick);
         // Create an ArrayAdapter using the string array and a default spinner layout
         ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(getContext(),
                 R.array.listtimer, R.layout.spinner_support);
@@ -171,13 +154,7 @@ public class AddNewTimerFragment extends Fragment {
         meditConfirm_button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                String.valueOf(startHour);
-                String.valueOf(endHour);
-                String.valueOf(value);
-                MyListDataTimer isian = new MyListDataTimer(String.valueOf(startHour),String.valueOf(endHour),String.valueOf(value),String.valueOf(position));
-                myListDataTimers.add(isian);
                 new UploadAlarmDataToServer().execute();
-                position++;
             }
         });
 
@@ -200,7 +177,7 @@ public class AddNewTimerFragment extends Fragment {
 
         @Override
         protected String doInBackground(Void... params) {
-            String data = null;
+            String data;
             try {
                 data = sendDataTimer();
             } catch (Exception e) {
@@ -261,4 +238,5 @@ public class AddNewTimerFragment extends Fragment {
             super.onPostExecute(result);
         }
     }
+
 }
