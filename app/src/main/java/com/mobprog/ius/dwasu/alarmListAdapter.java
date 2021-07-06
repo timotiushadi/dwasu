@@ -7,6 +7,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CheckBox;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
@@ -42,13 +43,14 @@ public class alarmListAdapter extends RecyclerView.Adapter<alarmListAdapter.alar
                 long milisinfuture = Long.parseLong(myListData.getIntervalWaktu())*60000;
                 int convertedStartHour = Integer.parseInt(myListData.getStartHour());
                 int convertedEndHour = Integer.parseInt(myListData.getEndHour());
-                if (!holder.mcheckbox.isChecked()){
-                    if ((Calendar.HOUR_OF_DAY >= convertedStartHour) && (Calendar.HOUR_OF_DAY <= convertedEndHour)){
+                if ((Calendar.HOUR_OF_DAY >= convertedStartHour) && (Calendar.HOUR_OF_DAY <= convertedEndHour)){
+                    if (!holder.mcheckbox.isChecked()){
+                        Toast.makeText(v.getContext(), "Timer berjalan", Toast.LENGTH_SHORT).show();
                         new CountDownTimer(milisinfuture, 1000) {
                             @Override
                             public void onTick(long millisUntilFinished) {
                                 holder.mlastMinutesToCall.setText("In " + (millisUntilFinished/60000) +" minutes");
-                                Log.e("onTick","Timer jalan");
+                                Log.e("onTick","Timer jalan, " + millisUntilFinished + " detik tersisa");
                             }
 
                             @Override
@@ -68,6 +70,11 @@ public class alarmListAdapter extends RecyclerView.Adapter<alarmListAdapter.alar
                         }.start();
                     }
                 }
+                else {
+                    holder.mcheckbox.toggle();
+                    Toast.makeText(v.getContext(), "Tidak bisa diaktifkan karena diluar jam aktif", Toast.LENGTH_SHORT).show();
+                }
+
             }
         });
     }

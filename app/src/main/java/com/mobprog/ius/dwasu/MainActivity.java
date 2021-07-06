@@ -2,6 +2,8 @@ package com.mobprog.ius.dwasu;
 
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Rect;
+import android.graphics.drawable.Drawable;
 import android.net.ConnectivityManager;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -9,9 +11,12 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageButton;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.content.ContextCompat;
+import androidx.core.content.res.ResourcesCompat;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -36,10 +41,10 @@ public class MainActivity extends AppCompatActivity {
 
     static final String STATE_FRAGMENT = "state_of_fragment";
 
+    public ProgressBar progressBar = (ProgressBar) findViewById(R.id.progressBar);
+
     alarmListAdapter mAdapter;
     RecyclerView mRecyclerView;
-    Notification notification;
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -47,7 +52,8 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         try {
-            notification.createNotificationChannel("Primary", "Timer Notification", "Notif when Timer is done");
+            new Notification().createNotificationChannel("Primary", "Timer Notification", "Notif when Timer is done");
+            Log.e("NotifChannel", "Channel terbuat");
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -111,10 +117,8 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-//        // Get the Drawable custom_progressbar
-//        Drawable draw = ResourcesCompat.getDrawable(getResources(), R.drawable.progress_bar, null);
-//        // set the drawable as progress drawable
-//        ProgressBar.setProgressDrawable(draw);
+        // Get the Drawable custom_progressbar
+
     }
 
     public void onSaveInstanceState(Bundle savedInstanceState) {

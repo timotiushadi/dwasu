@@ -10,11 +10,10 @@
         <clip>
             <shape>
                 <gradient
-                    android:startColor="#FECD1A"
-                    android:centerColor="#FECD1A"
+                    android:startColor="#a3a3ff"
                     android:centerY="0.50"
-                    android:endColor="#FECD1A"
-                    android:angle="270"
+                    android:endColor="#4949ff"
+                    android:angle="0"
                     />
                 <corners android:radius="20dp"/>
             </shape>
