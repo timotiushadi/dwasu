@@ -2,7 +2,6 @@ package com.mobprog.ius.dwasu;
 
 import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.net.ConnectivityManager;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -11,7 +10,6 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.FragmentManager;
@@ -40,15 +38,19 @@ public class MainActivity extends AppCompatActivity {
 
     alarmListAdapter mAdapter;
     RecyclerView mRecyclerView;
-
     Notification notification;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        notification.createNotificationChannel("Primary", "Timer Notification", "Notif when Timer is done");
+        try {
+            notification.createNotificationChannel("Primary", "Timer Notification", "Notif when Timer is done");
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
 
         mRecyclerView = findViewById(R.id.recyclerView);
 

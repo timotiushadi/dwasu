@@ -59,7 +59,7 @@ public class Notification extends AppCompatActivity {
         }
     }
 
-    private NotificationCompat.Builder getNotificationBuilder(int builderID,String builderTitle, String builderText ) {
+    private NotificationCompat.Builder getNotificationBuilder(int builderID, String builderTitle, String builderText ) {
 
         // Set up the pending intent that is delivered when the notification
         // is clicked.
