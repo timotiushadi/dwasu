@@ -1,6 +1,9 @@
 package com.mobprog.ius.dwasu;
 
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
+import android.net.ConnectivityManager;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
@@ -15,11 +18,16 @@ import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
+import java.net.HttpURLConnection;
+import java.net.URL;
 import java.util.ArrayList;
 
 public class MainActivity extends AppCompatActivity {
@@ -33,10 +41,16 @@ public class MainActivity extends AppCompatActivity {
     alarmListAdapter mAdapter;
     RecyclerView mRecyclerView;
 
+    Notification notification;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        notification.createNotificationChannel("Primary", "Timer Notification", "Notif when Timer is done");
+
+        mRecyclerView = findViewById(R.id.recyclerView);
 
         ((TextView) findViewById(R.id.textUserName)).setText("Hello " + getSharedPreferences("Dwasu", 0).getString("user", ""));
 
@@ -45,17 +59,36 @@ public class MainActivity extends AppCompatActivity {
             finish();
         }
 
-        mRecyclerView = findViewById(R.id.recyclerView);
-        // Create an adapter and supply the data to be displayed.
-        mAdapter = new alarmListAdapter(myListDataTimers);
-        // Connect the adapter with the recycler view.
-        mRecyclerView.setAdapter(mAdapter);
-        // Give the recycler view a default layout manager.
-        mRecyclerView.setLayoutManager(new LinearLayoutManager(this));
-        new GetTimer().execute();
-
         if (savedInstanceState != null)
             isFragmentAddNewAlarmDisplayed = savedInstanceState.getBoolean(STATE_FRAGMENT);
+
+        if (isInternetAvailable()){
+            try {
+                getJSON("https://ius.mobile.indoserver.web.id/getData.php");
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+
+        final SwipeRefreshLayout pullToRefresh = findViewById(R.id.swipeRefresh);
+        pullToRefresh.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                myListDataTimers.clear();
+                refreshData(); // your code
+                pullToRefresh.setRefreshing(false);
+            }
+
+            private void refreshData() {
+                if (isInternetAvailable()){
+                    try {
+                        getJSON("https://ius.mobile.indoserver.web.id/getData.php");
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+        });
 
         Button mnewReminderButton = findViewById(R.id.newReminder);
         mnewReminderButton.setOnClickListener(new View.OnClickListener() {
@@ -67,7 +100,7 @@ public class MainActivity extends AppCompatActivity {
         });
 
         ImageButton mlogOutButton = findViewById(R.id.logOutButton);
-        findViewById(R.id.logOutButton).setOnClickListener(new View.OnClickListener() {
+        mlogOutButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 getSharedPreferences("Dwasu", 0).edit().clear().apply();
@@ -119,61 +152,75 @@ public class MainActivity extends AppCompatActivity {
         isFragmentAddNewAlarmDisplayed = true;
     }
 
-    private class GetTimer extends AsyncTask<Void, Void, Void>{
-        @Override
-        protected void onPreExecute() {
-            super.onPreExecute();
-            Toast.makeText(getApplicationContext(), "Checking data timer", Toast.LENGTH_LONG).show();
+    private void getJSON(final String urlWebService) {
 
-        }
+        class GetJSON extends AsyncTask<Void, Void, String> {
 
-        @Override
-        protected Void doInBackground(Void... arg0) {
-            myListDataTimers = new ArrayList<>();
-            HttpHandler sh = new HttpHandler();
-            // Making a request to url and getting response
-            String url = "https://ius.mobile.indoserver.web.id/getData.php";
-            String jsonStr = sh.makeServiceCall(url);
-
-            Log.e("Donlot json", "Response from url: " + jsonStr);
-            if (jsonStr != null) {
-                try {
-                    JSONObject jsonObj = new JSONObject(jsonStr);
-                    JSONObject dataTimer = jsonObj.getJSONObject("Data Timer");
-                    JSONArray datasTimer = dataTimer.getJSONArray("dataTimer");
-
-                    // looping through All Contacts
-                    for (int i = 0; i < datasTimer.length(); i++) {
-                        JSONObject g = datasTimer.getJSONObject(i);
-
-                        String pos = g.getString("pos");
-                        String startHour = g.getString("startHour");
-                        String endHour = g.getString("endHour");
-                        String intervalWaktu = g.getString("intervalWaktu");
-
-                        MyListDataTimer isianTimer = new MyListDataTimer(pos, startHour, endHour, intervalWaktu);
-
-                        myListDataTimers.add(isianTimer);
-
-                        Log.e("Donlot json", "Json total : " + myListDataTimers.size());
-                    }
-                } catch (final JSONException e) {
-                    Log.e("Donlot json", "Json parsing error: " + e.getMessage());
-
-                }
-
+            @Override
+            protected void onPreExecute() {
+                super.onPreExecute();
             }
 
-            return null;
+
+            @Override
+            protected void onPostExecute(String s) {
+                super.onPostExecute(s);
+//                Toast.makeText(getApplicationContext(), s, Toast.LENGTH_SHORT).show();
+                try {
+                    loadIntoListView(s);
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            }
+
+            @Override
+            protected String doInBackground(Void... voids) {
+                try {
+                    URL url = new URL(urlWebService);
+                    HttpURLConnection con = (HttpURLConnection) url.openConnection();
+                    StringBuilder sb = new StringBuilder();
+                    BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(con.getInputStream()));
+                    String json;
+                    while ((json = bufferedReader.readLine()) != null) {
+                        sb.append(json + "\n");
+                    }
+                    return sb.toString().trim();
+                } catch (Exception e) {
+                    return null;
+                }
+            }
+        }
+        GetJSON getJSON = new GetJSON();
+        getJSON.execute();
+    }
+
+    private void loadIntoListView(String json) throws JSONException {
+        JSONArray jsonArray = new JSONArray(json);
+        String[] heroes = new String[jsonArray.length()];
+        for (int i = 0; i < jsonArray.length(); i++) {
+            JSONObject g = jsonArray.getJSONObject(i);
+
+            String pos = g.getString("pos");
+            String startHour = g.getString("startHour");
+            String endHour = g.getString("endHour");
+            String intervalWaktu = g.getString("intervalWaktu");
+
+            MyListDataTimer isianTimer = new MyListDataTimer(startHour, endHour, intervalWaktu, pos);
+
+            myListDataTimers.add(isianTimer);
         }
 
-        @Override
-        protected void onPostExecute(Void result) {
-            super.onPostExecute(result);
-            mAdapter = new alarmListAdapter(myListDataTimers);
-            mRecyclerView.setLayoutManager(new LinearLayoutManager(getApplicationContext()));
-            //recyclerView.setLayoutManager(new GridLayoutManager(getActivity(), 2));
-            mRecyclerView.setAdapter(mAdapter);
-        }
+        // Create an adapter and supply the data to be displayed.
+        mAdapter = new alarmListAdapter(myListDataTimers);
+        // Connect the adapter with the recycler view.
+        mRecyclerView.setAdapter(mAdapter);
+        // Give the recycler view a default layout manager.
+        mRecyclerView.setLayoutManager(new LinearLayoutManager(this));
+    }
+
+    public boolean isInternetAvailable(){
+        ConnectivityManager cm = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+
+        return cm.getActiveNetworkInfo() != null && cm.getActiveNetworkInfo().isConnected();
     }
 }
